@@ -45,3 +45,4 @@ guides/
 - Progress tracking
 - Code snippet copying
 - Framework detection and recommendations
+

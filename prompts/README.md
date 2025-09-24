@@ -38,3 +38,4 @@ prompts/
 - Copy-to-clipboard functionality
 - Prompt rating and feedback system
 - Search and filtering capabilities
+

@@ -5,7 +5,7 @@ const inquirer = require('inquirer');
 
 module.exports = async (guideName) => {
   console.log(chalk.cyan('📚 AYPackage Guides'));
-  console.log(chalk.gray('Access framework-specific instruction guides\n'));
+  console.log(chalk.gray('Install framework-specific instruction guides to your project\n'));
   
   try {
     const guidesDir = path.join(__dirname, '../../guides');
@@ -28,7 +28,7 @@ module.exports = async (guideName) => {
       return;
     }
     
-    // If a specific guide name is provided, try to find and display it
+    // If a specific guide name is provided, try to find and install it
     if (guideName) {
       const guideFile = validGuides.find(file => {
         const fileName = file.replace(/\.(txt|md)$/, '');
@@ -36,7 +36,7 @@ module.exports = async (guideName) => {
       });
       
       if (guideFile) {
-        await displayGuide(guideFile, guidesDir);
+        await installGuide(guideFile, guidesDir);
         return;
       } else {
         console.log(chalk.red(`❌ Guide "${guideName}" not found.`));
@@ -61,29 +61,39 @@ module.exports = async (guideName) => {
       };
     });
     
-    choices.push(new inquirer.Separator('─'));
+    choices.push({ name: '─'.repeat(20), disabled: true });
     choices.push({
       name: 'Exit',
       value: 'exit'
     });
     
-    const { selectedGuide } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'selectedGuide',
-        message: 'Select a guide to view:',
-        choices: choices,
-        pageSize: 10
+    try {
+      const { selectedGuide } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'selectedGuide',
+          message: 'Select a guide to install:',
+          choices: choices,
+          pageSize: 10
+        }
+      ]);
+      
+      if (selectedGuide === 'exit') {
+        console.log(chalk.gray('\n👋 Goodbye!'));
+        return;
       }
-    ]);
-    
-    if (selectedGuide === 'exit') {
-      console.log(chalk.gray('\n👋 Goodbye!'));
-      return;
+      
+      // Install the selected guide
+      await installGuide(selectedGuide, guidesDir);
+    } catch (inquirerError) {
+      // If inquirer fails, show available guides and instructions
+      console.log(chalk.yellow('\n⚠️  Interactive mode not available. Available guides:'));
+      validGuides.forEach((file, index) => {
+        const fileName = file.replace(/\.(txt|md)$/, '');
+        console.log(chalk.blue(`  ${index + 1}. ${fileName}`));
+      });
+      console.log(chalk.gray('\n💡 Use: npx aypackage guides <guide-name> to install a specific guide'));
     }
-    
-    // Display the selected guide
-    await displayGuide(selectedGuide, guidesDir);
     
   } catch (error) {
     if (error.isTtyError) {
@@ -99,62 +109,93 @@ module.exports = async (guideName) => {
         console.log(chalk.blue(`${index + 1}. ${fileName}`));
       });
       
-      console.log(chalk.gray('\n💡 Use: npx aypackage guides <guide-name> to view a specific guide'));
+      console.log(chalk.gray('\n💡 Use: npx aypackage guides <guide-name> to install a specific guide'));
     } else {
       console.error(chalk.red('Error reading guides:'), error.message);
     }
   }
 };
 
-async function displayGuide(guideFile, guidesDir) {
+async function installGuide(guideFile, guidesDir) {
   try {
     const guidePath = path.join(guidesDir, guideFile);
     const guideContent = await fs.readFile(guidePath, 'utf8');
     const fileName = guideFile.replace(/\.(txt|md)$/, '');
     
-    console.log(chalk.cyan(`\n📖 ${fileName}`));
-    console.log(chalk.gray('='.repeat(50)));
-    console.log(guideContent);
-    console.log(chalk.gray('='.repeat(50)));
+    // Get current working directory
+    const currentDir = process.cwd();
     
-    // Ask if user wants to copy to clipboard (only if interactive mode is available)
+    // Create guides directory if it doesn't exist
+    const guidesDirPath = path.join(currentDir, 'guides');
+    await fs.ensureDir(guidesDirPath);
+    
+    // Create the guide file
+    const outputPath = path.join(guidesDirPath, guideFile);
+    
+    // Check if file already exists
+    if (await fs.pathExists(outputPath)) {
+      try {
+        const { overwrite } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'overwrite',
+            message: `Guide "${fileName}" already exists. Do you want to overwrite it?`,
+            default: false
+          }
+        ]);
+        
+        if (!overwrite) {
+          console.log(chalk.yellow('❌ Installation cancelled.'));
+          return;
+        }
+      } catch (inquirerError) {
+        // If inquirer fails, just overwrite
+        console.log(chalk.yellow(`⚠️  Guide "${fileName}" already exists. Overwriting...`));
+      }
+    }
+    
+    // Write the guide file
+    await fs.writeFile(outputPath, guideContent, 'utf8');
+    
+    console.log(chalk.green(`✅ Guide "${fileName}" installed successfully!`));
+    console.log(chalk.gray(`📁 Location: ${outputPath}`));
+    console.log(chalk.gray(`\n💡 You can now open and use this guide in your project.`));
+    
+    // Ask if user wants to open the file
     try {
-      const { copyToClipboard } = await inquirer.prompt([
+      const { openFile } = await inquirer.prompt([
         {
           type: 'confirm',
-          name: 'copyToClipboard',
-          message: 'Would you like to copy this guide to your clipboard?',
+          name: 'openFile',
+          message: 'Would you like to open the guide file?',
           default: false
         }
       ]);
       
-      if (copyToClipboard) {
+      if (openFile) {
+        const { exec } = require('child_process');
+        const { promisify } = require('util');
+        const execAsync = promisify(exec);
+        
         try {
-          const { exec } = require('child_process');
-          const { promisify } = require('util');
-          const execAsync = promisify(exec);
-          
-          // Try to copy to clipboard using system command
           if (process.platform === 'win32') {
-            await execAsync(`echo "${guideContent.replace(/"/g, '\\"')}" | clip`);
+            await execAsync(`start "" "${outputPath}"`);
           } else if (process.platform === 'darwin') {
-            await execAsync(`echo "${guideContent.replace(/"/g, '\\"')}" | pbcopy`);
+            await execAsync(`open "${outputPath}"`);
           } else {
-            await execAsync(`echo "${guideContent.replace(/"/g, '\\"')}" | xclip -selection clipboard`);
+            await execAsync(`xdg-open "${outputPath}"`);
           }
-          
-          console.log(chalk.green('✅ Guide copied to clipboard!'));
-        } catch (clipboardError) {
-          console.log(chalk.yellow('⚠️  Could not copy to clipboard automatically.'));
-          console.log(chalk.gray('You can manually copy the content above.'));
+          console.log(chalk.green('📖 Guide opened in your default editor!'));
+        } catch (openError) {
+          console.log(chalk.yellow('⚠️  Could not open the file automatically.'));
+          console.log(chalk.gray(`You can manually open: ${outputPath}`));
         }
       }
     } catch (inquirerError) {
-      // If inquirer fails, just show the content without clipboard option
-      console.log(chalk.gray('\n💡 You can manually copy the content above.'));
+      // If inquirer fails, just continue
     }
     
   } catch (error) {
-    console.error(chalk.red('Error reading guide:'), error.message);
+    console.error(chalk.red('Error installing guide:'), error.message);
   }
 }
