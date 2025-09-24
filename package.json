@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A CLI tool for sharing prompts, guides, and reusable systems across projects",
   "main": "bin/aypackage.js",
+  "type": "module",
   "bin": {
     "aypackage": "bin/aypackage.js"
   },

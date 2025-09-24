@@ -1,9 +1,13 @@
-const chalk = require('chalk');
-const fs = require('fs-extra');
-const path = require('path');
-const inquirer = require('inquirer');
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import inquirer from 'inquirer';
+import { fileURLToPath } from 'url';
 
-module.exports = async (guideName) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default async (guideName) => {
   console.log(chalk.cyan('📚 AYPackage Guides'));
   console.log(chalk.gray('Install framework-specific instruction guides to your project\n'));
   

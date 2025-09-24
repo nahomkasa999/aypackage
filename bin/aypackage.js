@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const { program } = require('commander');
-const chalk = require('chalk');
+import { program } from 'commander';
+import chalk from 'chalk';
 
 // Import command modules
-const promptsCommand = require('../src/commands/prompts');
-const guidesCommand = require('../src/commands/guides');
-const systemsCommand = require('../src/commands/systems');
+import promptsCommand from '../src/commands/prompts.js';
+import guidesCommand from '../src/commands/guides.js';
+import systemsCommand from '../src/commands/systems.js';
 
 program
   .name('aypackage')
@@ -30,6 +30,7 @@ program
 program
   .command('systems')
   .description('Install reusable systems and components')
+  .argument('[system-name]', 'Name of the system to install directly')
   .action(systemsCommand);
 
 // Default help
@@ -39,6 +40,7 @@ program.on('--help', () => {
   console.log('  $ aypackage prompts          # Browse AI prompts');
   console.log('  $ aypackage guides           # Access instruction guides');
   console.log('  $ aypackage systems          # Install systems');
+  console.log('  $ aypackage systems tiptap   # Install TipTap system directly');
   console.log('');
   console.log(chalk.yellow('For more information, visit: https://github.com/ayautomate/aypackage'));
 });
