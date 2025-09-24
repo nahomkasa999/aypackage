@@ -23,6 +23,7 @@ program
 program
   .command('guides')
   .description('Access framework-specific instruction guides')
+  .argument('[guide-name]', 'Name of the guide to view directly')
   .action(guidesCommand);
 
 // Systems command
