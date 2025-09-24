@@ -1,0 +1,40 @@
+{
+  "name": "aypackage",
+  "version": "1.0.0",
+  "description": "A CLI tool for sharing prompts, guides, and reusable systems across projects",
+  "main": "bin/aypackage.js",
+  "bin": {
+    "aypackage": "bin/aypackage.js"
+  },
+  "scripts": {
+    "start": "node bin/aypackage.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "prompts",
+    "guides",
+    "systems",
+    "templates",
+    "development",
+    "productivity"
+  ],
+  "author": "nahomkasa999",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nahomkasa999/aypackage.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "commander": "^11.0.0",
+    "inquirer": "^9.2.0",
+    "chalk": "^4.1.2",
+    "fs-extra": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}
