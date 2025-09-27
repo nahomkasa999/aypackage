@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const packageJsonPath = path.join(__dirname, '../package.json');
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -19,7 +23,7 @@ console.log(`📦 Current version: ${packageJson.version}`);
 
 try {
   // Bump version
-  execSync(`npm version ${versionType} --no-git-tag-version`, { stdio: 'inherit' });
+  execSync(`pnpm version ${versionType} --no-git-tag-version`, { stdio: 'inherit' });
   
   // Get new version
   const newPackageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -29,7 +33,7 @@ try {
   console.log(`📝 Committing changes...`);
   
   // Commit changes
-  execSync('git add package.json package-lock.json', { stdio: 'inherit' });
+  execSync('git add package.json pnpm-lock.yaml', { stdio: 'inherit' });
   execSync(`git commit -m "chore: bump version to ${newVersion}"`, { stdio: 'inherit' });
   
   console.log(`🚀 Pushing to GitHub...`);
