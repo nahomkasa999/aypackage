@@ -1,6 +1,6 @@
 {
   "name": "aypackage",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A CLI tool for sharing prompts, guides, and reusable systems across projects",
   "main": "bin/aypackage.js",
   "type": "module",
@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "echo 'Publishing aypackage...'",
     "postpublish": "echo 'Package published successfully!'",
-    "version": "git add -A && git commit -m 'chore: bump version'",
+    "version": "git add -A && git commit -m \"chore: bump version\"",
     "postversion": "git push && git push --tags",
     "release": "node scripts/release.js",
     "release:patch": "node scripts/release.js patch",
