@@ -146,6 +146,8 @@ async function installSystem(systemName, systemsDir) {
     
     if (typeof installer.installTipTap === 'function') {
       await installer.installTipTap();
+    } else if (typeof installer.installBetterAuth === 'function') {
+      await installer.installBetterAuth();
     } else if (typeof installer.default === 'function') {
       await installer.default();
     } else {

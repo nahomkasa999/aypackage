@@ -1,138 +1,117 @@
-# AYPackage
+# AyPackage - Better Auth System
 
-A CLI tool for sharing prompts, guides, and reusable systems across projects. Think of it as your personal knowledge base of proven solutions that you can quickly deploy in any project.
+A complete authentication system for Next.js applications using Better Auth.
 
-## 🚀 Installation
+## 🚀 Quick Start
 
-```bash
-npm install -g aypackage
-```
-
-## 📖 Usage
+Install the Better Auth system in your Next.js project:
 
 ```bash
-# Browse and copy proven prompts
-npx aypackage prompts
-
-# Access framework-specific instruction guides  
-npx aypackage guides
-
-# Install reusable systems and components
-npx aypackage systems
+npx aypackage systems better-auth
 ```
 
-## 🎯 What is AYPackage?
+## ✨ Features
 
-AYPackage is designed to solve the problem of repetitive development tasks by providing three types of reusable resources:
+- **Complete Authentication System** - Sign in, sign up, and session management
+- **Role-Based Access Control** - Admin, Editor, and User roles
+- **Google OAuth Integration** - Social authentication support
+- **Beautiful UI Components** - Pre-built signin/signup forms
+- **TypeScript Support** - Full type safety
+- **App Router Compatible** - Works with Next.js 13+ App Router
 
-### 1. 📝 Prompts
-Human-written, proven prompts for AI tools. When you find a prompt that works exceptionally well, save it here and share it with your team.
+## 📁 What Gets Installed
 
-**Example:**
-- Content generation prompts
-- Code review prompts  
-- Debugging prompts
-- Marketing copy prompts
+### Pages
+- `/signin` - Sign in page
+- `/signup` - Sign up page  
+- `/unauthorized` - Unauthorized access page
 
-### 2. 📚 Guides
-Framework-specific instruction guides extracted from large documentation. Instead of reading through entire docs, get only the parts relevant to your framework.
+### API Routes
+- `/api/auth/[...all]` - Better Auth API handler
 
-**Example:**
-- `better-auth-nextjs-guide.txt` - Only Next.js parts from BetterAuth docs
-- `supabase-auth-setup.md` - Step-by-step Supabase auth setup
-- `prisma-deployment-guide.txt` - Framework-specific Prisma deployment
+### Components
+- `AuthForm` - Reusable authentication form component
 
-### 3. 🔧 Systems
-Complete, modular implementations of common project patterns. These are end-to-end solutions that you can import and use immediately.
+### Utilities
+- `lib/auth.ts` - Server-side auth configuration
+- `lib/auth-client.ts` - Client-side auth configuration
+- `types/auth.ts` - TypeScript definitions
+- `hooks/queries.ts` - Authentication hooks
 
-**Example:**
-- **Authentication System** - Complete auth setup with multiple providers
-- **Rich Text Editor** - TipTap implementation with selected features
-- **Database Setup** - Prisma schema and configuration
-- **API Integration** - Common third-party service integrations
+## 🔧 Configuration
 
-## 🏗️ System Structure
+After installation, update your `.env.local`:
 
-```
-systems/
-├── authentication/
-│   ├── nextjs/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── utils/
-│   │   └── README.md
-│   └── react/
-│       └── ...
-├── rich-text-editor/
-│   ├── nextjs/
-│   │   ├── components/
-│   │   ├── styles/
-│   │   └── README.md
-│   └── react/
-│       └── ...
-└── ...
+```env
+# Better Auth Configuration
+BETTER_AUTH_SECRET=your-secret-key-here
+BETTER_AUTH_URL=http://localhost:3000
+
+# Google OAuth (optional)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/database_name"
+DIRECT_URL="postgresql://username:password@localhost:5432/database_name"
 ```
 
-## 🎮 Interactive Features (Coming Soon)
+## 🛠 Usage
 
-### System Installation Flow
-```bash
-npx aypackage systems authentication
+### Server-Side Authentication
+```typescript
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 
-# Interactive prompts:
-# → Which framework? [Next.js, React, Vue, etc.]
-# → Social providers? [y/n]
-# → If yes: [Google, GitHub, Discord, etc.]
-# → Database preferences? [Supabase, Prisma, etc.]
-# → Install packages? [y/n]
-# → Generate files and copy to clipboard
+const session = await auth.api.getSession({
+  headers: await headers()
+})
+
+if (!session || session.user.role !== 'ADMIN') {
+  redirect('/unauthorized')
+}
 ```
 
-### Feature Selection
-```bash
-npx aypackage systems rich-text-editor
+### Client-Side Authentication
+```typescript
+import { useAuth } from "@/hooks/queries"
+import { isAdmin } from "@/types/auth"
 
-# → What features do you need?
-#   ☐ Bold, Italic, Underline
-#   ☐ Images, Links, Tables
-#   ☐ Code blocks, Lists
-#   ☐ Custom extensions
+const { session, user, isAuthenticated, isAdmin } = useAuth()
+
+if (!isAuthenticated || !isAdmin) {
+  router.push('/unauthorized')
+}
 ```
 
-## 🎨 Philosophy
+### Using the AuthForm Component
+```typescript
+import { AuthForm } from "@/components/login-form"
 
-**Copy-Paste, Not Dependencies**: Unlike traditional packages, AYPackage gives you the actual code to own and modify. No black boxes, no version conflicts.
+// Sign in mode
+<AuthForm mode="signin" />
 
-**Proven Solutions**: Every prompt, guide, and system has been tested and refined in real projects.
+// Sign up mode  
+<AuthForm mode="signup" />
+```
 
-**Framework Agnostic**: Systems are organized by framework, so you get exactly what you need for your tech stack.
+## 🔐 Security Features
 
-**Continuous Evolution**: As you build more projects, you'll add more systems, creating a growing library of proven solutions.
+- **Server-Side Validation** - All routes protected with server-side checks
+- **Role-Based Access** - Admin, Editor, and User role support
+- **Session Management** - Secure session handling
+- **CSRF Protection** - Built-in CSRF protection
+- **Rate Limiting** - Protection against brute force attacks
 
-## 🚧 Current Status
+## 📚 Documentation
 
-This is the foundation release. The CLI structure is ready, and the framework is in place for:
-
-- ✅ Basic CLI commands
-- ✅ Directory structure
-- ✅ Command framework
-- 🔄 Interactive prompts (coming soon)
-- 🔄 Code generation (coming soon)
-- 🔄 Package management (coming soon)
+For detailed documentation, see the [Better Auth documentation](https://better-auth.com).
 
 ## 🤝 Contributing
 
-This package is designed for personal/organizational use. You can:
-
-1. Add your own prompts to the `prompts/` directory
-2. Create framework-specific guides in `guides/`
-3. Build reusable systems in `systems/`
-4. Share your proven solutions with your team
+This package is part of the AyAutomate ecosystem. For contributions, please contact the development team.
 
 ## 📄 License
 
-MIT License - feel free to use and modify for your projects.
-
----
-
-**Built by AYAutomate** - Making development more efficient, one system at a time.
+MIT License - see LICENSE file for details.

@@ -1,48 +1,44 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
-import chalk from 'chalk';
+import path from 'path'
+import { fileURLToPath } from 'url'
+import systemsCommand from '../src/commands/systems.js'
 
-// Import command modules
-import promptsCommand from '../src/commands/prompts.js';
-import guidesCommand from '../src/commands/guides.js';
-import systemsCommand from '../src/commands/systems.js';
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-program
-  .name('aypackage')
-  .description('A CLI tool for sharing prompts, guides, and reusable systems')
-  .version('1.0.0');
+const args = process.argv.slice(2)
 
-// Prompts command
-program
-  .command('prompts')
-  .description('Browse and copy proven prompts')
-  .action(promptsCommand);
+if (args.length === 0) {
+  console.log('Usage: npx aypackage <command> [options]')
+  console.log('')
+  console.log('Available commands:')
+  console.log('  systems [system-name]    List or install systems')
+  console.log('  prompts                  List available prompts')
+  console.log('  guides                   List available guides')
+  console.log('')
+  process.exit(1)
+}
 
-// Guides command
-program
-  .command('guides')
-  .description('Access framework-specific instruction guides')
-  .argument('[guide-name]', 'Name of the guide to view directly')
-  .action(guidesCommand);
+const [command, ...options] = args
 
-// Systems command
-program
-  .command('systems')
-  .description('Install reusable systems and components')
-  .argument('[system-name]', 'Name of the system to install directly')
-  .action(systemsCommand);
-
-// Default help
-program.on('--help', () => {
-  console.log('');
-  console.log(chalk.cyan('Examples:'));
-  console.log('  $ aypackage prompts          # Browse AI prompts');
-  console.log('  $ aypackage guides           # Access instruction guides');
-  console.log('  $ aypackage systems          # Install systems');
-  console.log('  $ aypackage systems tiptap   # Install TipTap system directly');
-  console.log('');
-  console.log(chalk.yellow('For more information, visit: https://github.com/ayautomate/aypackage'));
-});
-
-program.parse();
+switch (command) {
+  case 'systems':
+    await systemsCommand(options[0])
+    break
+  case 'prompts':
+    console.log('📝 Prompts feature coming soon!')
+    break
+  case 'guides':
+    console.log('📚 Guides feature coming soon!')
+    break
+  default:
+    console.log(`❌ Unknown command: ${command}`)
+    console.log('')
+    console.log('Available commands:')
+    console.log('  systems [system-name]    List or install systems')
+    console.log('  prompts                  List available prompts')
+    console.log('  guides                   List available guides')
+    console.log('')
+    process.exit(1)
+}

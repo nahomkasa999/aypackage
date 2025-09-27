@@ -1,6 +1,6 @@
 {
   "name": "aypackage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A CLI tool for sharing prompts, guides, and reusable systems across projects",
   "main": "bin/aypackage.js",
   "type": "module",
@@ -26,7 +26,10 @@
     "systems",
     "templates",
     "development",
-    "productivity"
+    "productivity",
+    "nextjs",
+    "authentication",
+    "better-auth"
   ],
   "author": "nahomkasa999",
   "license": "MIT",
@@ -38,12 +41,16 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "commander": "^11.0.0",
-    "inquirer": "^9.2.0",
+    "@prisma/client": "^5.22.0",
+    "better-auth": "^0.8.8",
     "chalk": "^4.1.2",
-    "fs-extra": "^11.1.0"
+    "commander": "^11.0.0",
+    "fs-extra": "^11.1.0",
+    "inquirer": "^9.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "@types/react": "19.1.14",
+    "typescript": "catalog:"
   }
 }

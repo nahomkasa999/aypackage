@@ -453,7 +453,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Start writing
             <Input
               placeholder="Enter image URL"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImageUrl(e.target.value)}
               className="mb-4"
             />
             <div className="flex gap-2">
@@ -476,7 +476,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Start writing
             <Input
               placeholder="Enter URL"
               value={linkUrl}
-              onChange={(e) => setLinkUrl(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLinkUrl(e.target.value)}
               className="mb-4"
             />
             <div className="flex gap-2">
