@@ -1,6 +1,6 @@
 {
   "name": "aypackage",
-  "version": "1.1.1",
+  "version": "1.1.2-fix.0",
   "description": "A CLI tool for sharing prompts, guides, and reusable systems across projects",
   "main": "bin/aypackage.js",
   "type": "module",
